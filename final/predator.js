@@ -1,44 +1,17 @@
-class Predator extends LivingCreature {
+let LivingCreature = require("./LivingCreature")
+module.exports =class Predator extends LivingCreature {
     constructor(x, y) {
         super(x, y)
         this.energy = 20;
         this.multiply = 0
         this.directions = [];
     }
-    getNewCoordinates() {
-        this.directions = [
-            [this.x - 1, this.y - 1],
-            [this.x, this.y - 1],
-            [this.x + 1, this.y - 1],
-            [this.x - 1, this.y],
-            [this.x + 1, this.y],
-            [this.x - 1, this.y + 1],
-            [this.x, this.y + 1],
-            [this.x + 1, this.y + 1]
-        ];
-    }
-
-    chooseCell(character) {
-        this.getNewCoordinates()
-        var found = [];
-        for (var i in this.directions) {
-            var x = this.directions[i][0];
-            var y = this.directions[i][1];
-            if (x >= 0 && x < matrix[0].length && y >= 0 && y < matrix.length) {
-
-                if (matrix[y][x] == character) {
-                    found.push(this.directions[i]);
-                }
-            }
-        }
-        return found;
-    }
+  
     mul() {
         this.multiply++;
-        var emptyCells = this.chooseCell(0);
-        // var emptyCells = this.chooseCell(1);
-        var newCell = random(emptyCells);
-
+        var emptyCells = super.chooseCell(0);
+        var newCell = emptyCells[Math.floor(Math.random() * emptyCells.length)]//random(emptyCells);
+// var emptyCells = this.chooseCell(1)
         console.log(emptyCells);
         if (newCell && this.multiply >= 12) {
             var newX = newCell[0];
@@ -52,8 +25,8 @@ class Predator extends LivingCreature {
     }
     move() {
         this.energy--
-        var emptyCells = this.chooseCell(0)
-        var emptyCells1 = this.chooseCell(1)
+        var emptyCells = super.chooseCell(0)
+        var emptyCells1 = super.chooseCell(1)
         var newCell = emptyCells[Math.floor(Math.random() * emptyCells.length)]
         var newCell1 = emptyCells1[Math.floor(Math.random() * emptyCells1.length)]
 
@@ -80,7 +53,7 @@ class Predator extends LivingCreature {
     }
 
     eat() {
-        var emptyCells = this.chooseCell(2)
+        var emptyCells = super.chooseCell(2)
         var newCell = emptyCells[Math.floor(Math.random() * emptyCells.length)]
 
         if (newCell) {
