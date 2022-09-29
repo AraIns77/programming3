@@ -54,7 +54,6 @@ function generator(matLen, gr, grEat, pr, ct) {
     return matrix;
 }
 
-let side = 20;
 
  matrix = generator(30, 100, 20, 20, 5);
 
