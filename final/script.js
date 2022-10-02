@@ -7,6 +7,9 @@ function setup() {
    
 
 }
+socket.on("weather", function (data) {
+    weath = data;
+})
 
 function nkarel(matrix) {
     for (var y = 0; y < matrix.length; y++) {
@@ -14,7 +17,18 @@ function nkarel(matrix) {
 
             if (matrix[y][x] == 1) {
                 fill("green");
-            } else if (matrix[y][x] == 2) {
+                if (weath == "summer") {
+                    fill("green");
+                }else if (weath == "autumn") {
+                    fill("yellow");
+                }else if (weath == "winter") {
+                    fill("white");
+                }else if (weath == "spring") {
+                    fill("lightgreen");
+                }
+                
+            } 
+            else if (matrix[y][x] == 2) {
                 fill("yellow");
             }
             else if (matrix[y][x] == 3){
@@ -35,8 +49,18 @@ function nkarel(matrix) {
 
 }
 
-setInterval(
-    function(){
+
         socket.on('send matrix',nkarel)
-    },1000
-)
+
+function addGrass() {
+    socket.emit("add Grass")
+}
+function addGrassEater() {
+    socket.emit("add GrassEater")
+}
+function Predator() {
+    socket.emit("add Predator")
+}
+function addCactus() {
+    socket.emit("add Cactus")
+}

@@ -4,6 +4,7 @@ var server = require('http').Server(app);
 
 var io = require('socket.io')(server);
 
+matrix = [];
 
 
 app.use(express.static("."));
@@ -59,16 +60,29 @@ function generator(matLen, gr, grEat, pr, ct) {
 
 
 io.sockets.emit('send matrix', matrix)
-
+var n = 20;
 grassArr = []
 grassEaterArr = []
 predatorArr = []
 cactusArr = []
-
+weath = "winter";
 var Grass = require("./grass")
 var GrassEater = require("./grasseater")
 var Predator = require("./predator")
 var Cactus = require("./cactus")
+function rand(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+for (let i = 0; i < n; i++) {
+    matrix[i] = [];
+    for (let j = 0; j < n; j++) {
+        matrix[i][j] = Math.floor(rand(0, 3))
+        
+    }  
+}
+
+io.sockets.emit("send matrix", matrix)
 
 function createObjsect(matrix) {
     for (var y = 0; y < matrix.length; y++) {
@@ -115,3 +129,84 @@ setInterval(game, 200)
 io.on('connection', function () {
     createObjsect(matrix)
 })
+function addGrass() {
+    for (var i = 0; i < 7; i++) {
+    var x = Math.floor(Math.random() * matrix[0].length)
+    var y = Math.floor(Math.random() * matrix.length)
+        if (matrix[y][x] == 0) {
+            matrix[y][x] = 1
+            var gr = new Grass(x, y, 1)
+            grassArr.push(gr)
+        }
+    }
+    io.sockets.emit("send matrix", matrix);
+}
+function addGrassEater() {
+    for (var i = 0; i < 7; i++) {   
+    var x = Math.floor(Math.random() * matrix[0].length)
+    var y = Math.floor(Math.random() * matrix.length)
+        if (matrix[y][x] == 0) {
+            matrix[y][x] = 2
+            grassEaterArr.push(new GrassEater(x, y, 2))
+        }
+    }
+    io.sockets.emit("send matrix", matrix);
+}
+function addPredator() {
+    for (var i = 0; i < 7; i++) {
+    var x = Math.floor(Math.random() * matrix[0].length)
+    var y = Math.floor(Math.random() * matrix.length)
+        if (matrix[y][x] == 0) {
+            matrix[y][x] = 1
+            var gr = new Grass(x, y, 1)
+            grassArr.push(gr)
+        }
+    }
+    io.sockets.emit("send matrix", matrix);
+}
+function addCactus() {
+    for (var i = 0; i < 7; i++) {   
+    var x = Math.floor(Math.random() * matrix[0].length)
+    var y = Math.floor(Math.random() * matrix.length)
+        if (matrix[y][x] == 0) {
+            matrix[y][x] = 2
+            grassEaterArr.push(new GrassEater(x, y, 2))
+        }
+    }
+    io.sockets.emit("send matrix", matrix);
+    var statistics = {};
+
+setInterval(function() {
+    statistics.grass = grassArr.length;
+    statistics.grassEater = grassEaterArr.length;
+    statistics.Predator = predatorArr.length;
+    statistics.Cactus = cactusArr.length;
+    fs.writeFile("statistics.json", JSON.stringify(statistics), function(){
+        console.log("send")
+    })
+},1000)
+}
+function weather() {
+    if (weath == "summer") {
+        weath = "autumn"
+    }
+    if (weath == "winter") {
+        weath = "spring"
+    }
+    else if (weath == "autumn") {
+        weath = "winter"
+    }
+    else if (weath == "spring") {
+        weath = "summer"
+    }
+   
+   
+    io.sockets.emit('weather', weath)
+}
+setInterval(weather, 10000);
+io.on('connection', function (socket) {
+    socket.on("add cactus", addCactus);
+    socket.on("add grass", addGrass);
+    socket.on("add grassEater", addGrassEater);
+    socket.on("add predator", addPredator);
+});

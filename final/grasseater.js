@@ -1,5 +1,5 @@
 let LivingCreature = require("./LivingCreature")
-module.exports =class GrassEater extends LivingCreature {
+module.exports = class GrassEater extends LivingCreature {
     constructor(x, y) {
         super(x, y)
         this.energy = 8;
@@ -7,7 +7,7 @@ module.exports =class GrassEater extends LivingCreature {
         this.directions = [];
     }
 
-    
+
 
     mul() {
         this.multiply++;
@@ -22,6 +22,15 @@ module.exports =class GrassEater extends LivingCreature {
             var newGrass = new GrassEater(newX, newY);
             grassEaterArr.push(newGrass);
             this.multiply = 0;
+        }
+        if (weath == "winter") {
+            this.multiply -= 4;
+            this.energy -= 4;
+
+        }
+        if (weath == "sumemr") {
+            this.multiply -= 2;
+            this.energy -= 2;
         }
     }
 
